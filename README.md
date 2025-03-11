@@ -32,14 +32,14 @@ git clone https://github.com/yourusername/ipfs-file-sharing-app.git
 ```
 
 
-2. **Navigate to the project directory:**
+2. **Navigate to the server directory:**
 
 ```bash
-cd ipfs-file-sharing-app
+cd ipfs-file-sharing-app/server
 ```
 
 
-3. **Install dependencies:**
+3. **Install server dependencies:**
 
 ```bash
 pip install -r requirements.txt
@@ -62,7 +62,7 @@ Run provided scripts or Jupyter notebooks.
 ```bash
 cd gui
 npm install
-npm start
+npm run dev
 ```
 
 ## Contributing

@@ -2,7 +2,6 @@
   <div class="uploader-container">
     <h2>IPFS File Uploader & Retriever</h2>
 
-    <!-- Upload Section -->
     <div class="upload-box">
       <label for="file-upload" class="custom-file-upload">
         <input type="file" id="file-upload" @change="selectFile" />
@@ -12,26 +11,27 @@
       <button @click="uploadFile" :disabled="!selectedFile" class="upload-btn">Upload</button>
     </div>
 
-    <!-- Upload Status -->
+    <hr class="line" />
+
     <div v-if="fileHash" class="result-box">
       <p><strong>Uploaded File Hash:</strong> <span class="hash-text">{{ fileHash }}</span></p>
       <button @click="copyToClipboard" class="copy-btn">📋 Copy Hash</button>
     </div>
 
-    <!-- File Retrieval Section -->
     <div class="retrieve-box">
       <input type="text" v-model="retrieveHash" placeholder="Enter file hash to retrieve" />
       <button @click="retrieveFile" :disabled="!retrieveHash" class="retrieve-btn">Download</button>
     </div>
 
-    <!-- Status Message -->
     <p v-if="message" class="status-message">{{ message }}</p>
+
+    <IPFSHistory ref="historyComponent" />
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import IPFSHistory from "./IPFSHistory.vue"; // Import the new component
+import IPFSHistory from "./IPFSHistory.vue";
 
 export default {
   components: {
@@ -107,7 +107,7 @@ export default {
 
 <style scoped>
 .uploader-container {
-  max-width: 500px;
+  max-width: 1000px;
   margin: auto;
   text-align: center;
   background: #f9f9f9;
@@ -125,6 +125,15 @@ h2 {
 .upload-box,
 .retrieve-box {
   margin: 15px 0;
+  display: grid;
+}
+
+.upload-box input,
+.retrieve-box input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
 }
 
 .custom-file-upload {
@@ -147,7 +156,7 @@ h2 {
 .retrieve-btn,
 .copy-btn {
   background: #4caf50;
-  color: white;
+  color: black;
   border: none;
   padding: 10px 15px;
   margin-top: 10px;
@@ -184,5 +193,11 @@ h2 {
   font-size: 1em;
   color: #333;
   margin-top: 15px;
+}
+
+.line {
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 20px 0;
 }
 </style>
