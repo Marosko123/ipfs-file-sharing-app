@@ -17,32 +17,29 @@ This repository provides a simple, practical introduction to decentralized file 
 
 ## Technologies Used
 
-**IPFS:** Decentralized file storage protocol.
-
-**Python:** Backend implementation.
-
-**JavaScript:** Optional GUI frontend.
-
-**Jupyter Notebook:** Interactive documentation.
+- **IPFS:** Decentralized file storage protocol.
+- **Python:** Backend implementation.
+- **JavaScript:** Optional GUI frontend.
+- **Jupyter Notebook:** Interactive documentation.
 
 
 ## Installation
 
-Clone the repository:
+1. Clone the repository:
 
 ```bash
 git clone https://github.com/yourusername/ipfs-file-sharing-app.git
 ```
 
 
-**Navigate to the project directory:**
+2. **Navigate to the project directory:**
 
 ```bash
 cd ipfs-file-sharing-app
 ```
 
 
-**Install dependencies:**
+3. **Install dependencies:**
 
 ```bash
 pip install -r requirements.txt
@@ -52,7 +49,7 @@ pip install -r requirements.txt
 ## Usage
 
 
-**Start your IPFS daemon:**
+1. **Start your IPFS daemon:**
 
 ```bash
 ipfs daemon
@@ -60,7 +57,7 @@ ipfs daemon
 
 Run provided scripts or Jupyter notebooks.
 
-**Launch GUI (optional):**
+2. **Launch GUI (optional):**
 
 ```bash
 cd gui
