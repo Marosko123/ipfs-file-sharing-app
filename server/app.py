@@ -1,22 +1,24 @@
-from flask import Flask, request, jsonify, send_file
-from flask_cors import CORS
-import requests
 import os
 import mimetypes
+from flask import Flask, request, jsonify, send_file
+from flask_cors import CORS
+import ipfshttpclient
 
 app = Flask(__name__)
 CORS(app)
 
-IPFS_API_URL = "http://127.0.0.1:5001/api/v0"
+# Connect to local IPFS daemon (defaults to /ip4/127.0.0.1/tcp/5001/http)
+client = ipfshttpclient.connect()
+
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# ✅ Store filename alongside the hash
-file_hash_map = {}  # Temporary dictionary to map hashes to filenames
+# Temporary dictionary to map IPFS file hashes to their original filenames
+file_hash_map = {}
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    """Handles file uploads and adds them to IPFS"""
+    """Handle file uploads and add them to IPFS using the ipfshttpclient library."""
     if 'file' not in request.files:
         return jsonify({"error": "No file part"}), 400
 
@@ -24,42 +26,47 @@ def upload_file():
     if file.filename == '':
         return jsonify({"error": "No selected file"}), 400
 
+    # Save file locally
     filepath = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(filepath)
 
-    with open(filepath, 'rb') as f:
-        files = {'file': f}
-        response = requests.post(f"{IPFS_API_URL}/add", files=files)
+    # Add file to IPFS
+    try:
+        result = client.add(filepath)
+        # result is typically a dict with keys like {'Hash': '...', 'Name': '...', 'Size': '...'}
+        file_hash = result['Hash']
+        file_hash_map[file_hash] = file.filename
+    except Exception as e:
+        return jsonify({"error": f"IPFS upload failed: {str(e)}"}), 500
+    finally:
+        # Clean up the local file once added to IPFS
+        if os.path.exists(filepath):
+            os.remove(filepath)
 
-    os.remove(filepath)
-
-    if response.status_code == 200:
-        file_hash = response.json()["Hash"]
-        file_hash_map[file_hash] = file.filename  # Store filename
-
-        return jsonify({"Hash": file_hash, "Filename": file.filename}), 200
-    else:
-        return jsonify({"error": "IPFS upload failed"}), 500
+    return jsonify({"Hash": file_hash, "Filename": file.filename}), 200
 
 @app.route('/retrieve/<file_hash>', methods=['GET'])
 def retrieve_file(file_hash):
-    """Retrieves a file from IPFS and ensures it downloads with the correct filename and type."""
-    response = requests.post(f"{IPFS_API_URL}/cat?arg={file_hash}")
+    """Retrieve a file from IPFS by its hash, and send it to the client."""
+    try:
+        # Download file content from IPFS directly into memory
+        file_data = client.cat(file_hash)
+    except Exception as e:
+        return jsonify({"error": f"File retrieval failed: {str(e)}"}), 404
 
-    if response.status_code == 200:
-        file_name = file_hash_map.get(file_hash, f"{file_hash}.unknown")  # Default if filename not found
-        file_path = os.path.join(UPLOAD_FOLDER, file_name)
+    # Use the stored name or default to <hash>.unknown if not found
+    file_name = file_hash_map.get(file_hash, f"{file_hash}.unknown")
+    file_path = os.path.join(UPLOAD_FOLDER, file_name)
 
-        with open(file_path, 'wb') as f:
-            f.write(response.content)
+    # Write the file to disk so we can return it with send_file
+    with open(file_path, 'wb') as f:
+        f.write(file_data)
 
-        # Get correct MIME type for the file
-        mime_type, _ = mimetypes.guess_type(file_name)
-        mime_type = mime_type or "application/octet-stream"  # Default if unknown
+    # Determine the MIME type for the response
+    mime_type, _ = mimetypes.guess_type(file_name)
+    mime_type = mime_type or "application/octet-stream"
 
-        return send_file(file_path, as_attachment=True, download_name=file_name, mimetype=mime_type)
-    else:
-        return jsonify({"error": "File retrieval failed"}), 404
+    return send_file(file_path, as_attachment=True, download_name=file_name, mimetype=mime_type)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

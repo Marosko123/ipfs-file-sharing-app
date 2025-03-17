@@ -45,25 +45,46 @@ cd ipfs-file-sharing-app/server
 pip install -r requirements.txt
 ```
 
+4. **Install Correct version of IPFS daemon**
+
+```bash
+curl -O https://dist.ipfs.tech/go-ipfs/v0.7.0/go-ipfs_v0.7.0_darwin-amd64.tar.gz
+```
+
+After installation is complete, extract the tarball and copy the IPFS binary to your system path:
+```bash
+tar xvf go-ipfs_v0.7.0_darwin-amd64.tar.gz
+cd go-ipfs
+sudo cp ipfs /usr/local/bin/
+```
 
 ## Usage
 
-
 1. **Start your IPFS daemon:**
+Open new terminal window and run the following commands:
 
 ```bash
+ipfs init
 ipfs daemon
 ```
 
-Run provided scripts or Jupyter notebooks.
+2. **Run app.py:**
+Open new terminal window and run the following commands:
 
-2. **Launch GUI (optional):**
+```bash
+cd server
+python3 app.py
+```
+
+3. **Launch GUI:**
+Open new terminal window and run the following commands:
 
 ```bash
 cd gui
 npm install
 npm run dev
 ```
+
 
 ## Contributing
 
