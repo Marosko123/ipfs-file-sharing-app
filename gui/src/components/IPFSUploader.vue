@@ -1,203 +1,286 @@
+<!-- IPFSUploader.vue (Buttons Aligned Right) -->
 <template>
   <div class="uploader-container">
     <h2>IPFS File Uploader & Retriever</h2>
 
     <div class="upload-box">
-      <label for="file-upload" class="custom-file-upload">
-        <input type="file" id="file-upload" @change="selectFile" />
+      <label class="custom-file-upload" for="file-upload">
+        <input
+          ref="fileInput"
+          id="file-upload"
+          type="file"
+          @change="selectFile"
+        />
         <span v-if="selectedFile">{{ selectedFile.name }}</span>
         <span v-else>📁 Choose a file to upload</span>
       </label>
-      <button @click="uploadFile" :disabled="!selectedFile" class="upload-btn">Upload</button>
+      <button
+        @click="uploadFile"
+        :disabled="!selectedFile || loading"
+        class="upload-btn"
+      >
+        {{ loading ? `Uploading (${progress}%)` : 'Upload' }}
+      </button>
     </div>
 
-    <hr class="line" />
+    <progress
+      v-if="loading"
+      :value="progress"
+      max="100"
+      class="progress-bar"
+    ></progress>
 
     <div v-if="fileHash" class="result-box">
-      <p><strong>Uploaded File Hash:</strong> <span class="hash-text">{{ fileHash }}</span></p>
-      <button @click="copyToClipboard" class="copy-btn">📋 Copy Hash</button>
+      <p>
+        <strong>Uploaded File Hash:</strong>
+          {{ fileHash }}
+      </p>
+      <button @click="copyToClipboard" class="copy-btn">Copy Hash</button>
     </div>
 
     <div class="retrieve-box">
-      <input type="text" v-model="retrieveHash" placeholder="Enter file hash to retrieve" />
-      <button @click="retrieveFile" :disabled="!retrieveHash" class="retrieve-btn">Download</button>
+      <input
+        type="text"
+        v-model="retrieveHash"
+        placeholder="Enter file hash to retrieve"
+        :disabled="loading"
+      />
+      <button
+        @click="retrieveFile"
+        :disabled="!retrieveHash || loading"
+        class="retrieve-btn"
+      >
+        {{ loading ? 'Downloading...' : 'Download' }}
+      </button>
     </div>
 
-    <p v-if="message" class="status-message">{{ message }}</p>
+    <p
+      v-if="message"
+      class="message"
+      :class="['status-message', error ? 'error-message' : '']"
+    >
+      {{ message }}
+    </p>
 
     <IPFSHistory ref="historyComponent" />
   </div>
 </template>
 
-<script>
-import axios from "axios";
-import IPFSHistory from "./IPFSHistory.vue";
+<script setup>
+import { ref, computed } from 'vue';
+import axios from 'axios';
+import IPFSHistory from './IPFSHistory.vue';
 
-export default {
-  components: {
-    IPFSHistory,
-  },
-  data() {
-    return {
-      selectedFile: null,
-      fileHash: "",
-      retrieveHash: "",
-      message: "",
-      apiBaseUrl: import.meta.env.VITE_API_BASE_URL,
-    };
-  },
-  methods: {
-    selectFile(event) {
-      this.selectedFile = event.target.files[0];
-    },
-    async uploadFile() {
-      if (!this.selectedFile) {
-        this.message = "Please select a file!";
-        return;
-      }
+const fileInput = ref(null);
+const selectedFile = ref(null);
+const fileHash = ref('');
+const retrieveHash = ref('');
+const message = ref('');
+const error = ref(false);
+const loading = ref(false);
+const progress = ref(0);
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-      let formData = new FormData();
-      formData.append("file", this.selectedFile);
+const gatewayUrl = computed(() =>
+  fileHash.value
+    ? `${apiBaseUrl.replace(/:\/\/[0-9]+/, '')}/ipfs/${fileHash.value}`
+    : ''
+);
 
-      try {
-        this.message = "Uploading file...";
-        let response = await axios.post(`${this.apiBaseUrl}/upload`, formData);
-        this.fileHash = response.data.Hash;
-        this.message = "✅ File uploaded successfully!";
-        this.$refs.historyComponent.addHash(this.fileHash); // Store hash in history
-      } catch (error) {
-        console.error(error);
-        this.message = "❌ Upload failed!";
-      }
-    },
-    async retrieveFile() {
-      if (!this.retrieveHash) {
-        this.message = "Please enter a valid file hash!";
-        return;
-      }
+function selectFile(event) {
+  selectedFile.value = event.target.files[0] || null;
+  message.value = '';
+  error.value = false;
+}
 
-      try {
-        this.message = "Downloading file...";
-        let response = await axios.get(`${this.apiBaseUrl}/retrieve/${this.retrieveHash}`, {
-          responseType: "blob",
-        });
+async function uploadFile() {
+  if (!selectedFile.value) return;
 
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", this.retrieveHash);
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
+  loading.value = true;
+  message.value = 'Uploading file...';
+  error.value = false;
+  progress.value = 0;
 
-        this.message = "✅ File retrieved and downloaded!";
-        this.$refs.historyComponent.addHash(this.retrieveHash); // Store hash in history
-      } catch (error) {
-        console.error(error);
-        this.message = "❌ Retrieval failed!";
-      }
-    },
-    copyToClipboard() {
-      navigator.clipboard.writeText(this.fileHash);
-      this.message = "📋 Hash copied to clipboard!";
-    },
-  },
-};
+  const formData = new FormData();
+  formData.append('file', selectedFile.value);
+
+  try {
+    const response = await axios.post(
+      `${apiBaseUrl}/upload`,
+      formData,
+      { onUploadProgress: evt => { progress.value = Math.round((evt.loaded * 100) / evt.total); } }
+    );
+    fileHash.value = response.data.Hash;
+    copyToClipboard();
+    message.value = `✅ Uploaded! Hash copied: ${fileHash.value}`;
+    historyComponent.value.addHash(fileHash.value);
+    selectedFile.value = null;
+    fileInput.value.value = '';
+  } catch (err) {
+    console.error(err);
+    message.value = '❌ Upload failed!';
+    error.value = true;
+  } finally {
+    loading.value = false;
+    progress.value = 0;
+  }
+}
+
+async function retrieveFile() {
+  if (!retrieveHash.value) return;
+
+  loading.value = true;
+  message.value = 'Downloading file...';
+  error.value = false;
+
+  try {
+    const res = await axios.get(
+      `${apiBaseUrl}/retrieve/${retrieveHash.value}`,
+      { responseType: 'blob' }
+    );
+    const url = URL.createObjectURL(new Blob([res.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', retrieveHash.value);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    message.value = '✅ File retrieved and downloaded!';
+    historyComponent.value.addHash(retrieveHash.value);
+  } catch (err) {
+    console.error(err);
+    message.value = '❌ Retrieval failed!';
+    error.value = true;
+  } finally {
+    loading.value = false;
+  }
+}
+
+function copyToClipboard() {
+  if (fileHash.value) navigator.clipboard.writeText(fileHash.value);
+}
+
+const historyComponent = ref(null);
 </script>
 
 <style scoped>
-.uploader-container {
-  max-width: 1000px;
-  margin: auto;
-  text-align: center;
-  background: #f9f9f9;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+button {
+  width: 100px;
+  font-weight: bold;
 }
 
-h2 {
-  font-size: 1.5em;
-  margin-bottom: 15px;
-  color: #333;
+strong
+{
+  font-weight: bold;
+}
+
+.uploader-container {
+  max-width: 800px;
+  margin: auto;
+  padding: 1.5rem;
+  background: var(--background-muted);
+  border-radius: 1rem;
+  color: var(--text-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .upload-box,
 .retrieve-box {
-  margin: 15px 0;
-  display: grid;
-}
-
-.upload-box input,
-.retrieve-box input {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
 }
 
 .custom-file-upload {
+  flex: 1;
+  background: var(--surface);
+  padding: 0.75rem;
+  border: 2px dashed var(--primary);
+  border-radius: 0.5rem;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #fff;
-  padding: 12px;
-  border: 2px dashed #aaa;
-  cursor: pointer;
-  border-radius: 8px;
-  width: 100%;
+  color: var(--text-secondary);
 }
 
-.custom-file-upload input {
-  display: none;
+.retrieve-box input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 2px solid var(--primary);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  color: var(--text-primary);
 }
 
 .upload-btn,
 .retrieve-btn,
 .copy-btn {
-  background: #4caf50;
-  color: black;
+  background: var(--primary);
+  color: var(--surface);
   border: none;
-  padding: 10px 15px;
-  margin-top: 10px;
-  border-radius: 6px;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0.5rem;
   cursor: pointer;
-  transition: 0.3s ease-in-out;
+  transition: background 0.2s;
 }
-
 .upload-btn:disabled,
 .retrieve-btn:disabled {
-  background: #ccc;
+  background: var(--text-secondary);
   cursor: not-allowed;
 }
-
-.upload-btn:hover,
-.retrieve-btn:hover,
+.upload-btn:hover:not(:disabled),
+.retrieve-btn:hover:not(:disabled),
 .copy-btn:hover {
-  background: #388e3c;
+  background: var(--primary-dark);
+}
+
+.progress-bar {
+  width: 100%;
+  margin: 0.5rem 0;
+  accent-color: var(--primary);
 }
 
 .result-box {
-  background: #e3f2fd;
-  padding: 10px;
-  border-radius: 6px;
-  margin-top: 10px;
+  background: var(--surface);
+  padding: 1rem;
+  border-left: 4px solid var(--primary);
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  color: var(--text-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.hash-text {
+.hash-link {
+  color: var(--primary-dark);
   font-weight: bold;
-  color: #0277bd;
+  word-break: break-all;
+}
+
+.message {
+  margin-top: 1rem;
+  font-size: 1.3rem;
 }
 
 .status-message {
-  font-size: 1em;
-  color: #333;
-  margin-top: 15px;
+  margin-top: 1rem;
+  color: var(--text-secondary);
 }
 
-.line {
-  border: 0;
-  border-top: 1px solid #ccc;
-  margin: 20px 0;
+.error-message {
+  color: var(--error);
 }
+
+.status-message.error-message {
+  color: var(--error);
+}
+
+.status-message:not(.error-message) {
+  color: var(--text-primary);
+}
+
 </style>

@@ -1,3 +1,4 @@
+<!-- components/ipfsUploader.vue -->
 <template>
   <div class="history-container">
     <h2>📜 File Hash History</h2>
@@ -43,7 +44,6 @@ export default {
     },
     copyHash(hash) {
       navigator.clipboard.writeText(hash);
-      alert("📋 Hash copied to clipboard!");
     },
     deleteHash(index) {
       this.hashes.splice(index, 1);
@@ -59,7 +59,6 @@ export default {
 
 <style scoped>
 .history-container {
-  max-width: 500px;
   margin: auto;
   text-align: center;
   background: #f9f9f9;

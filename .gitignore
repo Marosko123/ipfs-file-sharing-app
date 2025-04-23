@@ -1,3 +1,5 @@
 venv
 server/.idea
 server/uploads
+server/.DS_Store
+.idea

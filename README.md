@@ -28,7 +28,7 @@ This repository provides a simple, practical introduction to decentralized file 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/ipfs-file-sharing-app.git
+git clone https://github.com/Marosko123/ipfs-file-sharing-app.git
 ```
 
 

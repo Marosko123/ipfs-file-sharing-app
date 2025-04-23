@@ -1,0 +1,85 @@
+Introduction to IPFS: 
+A Simple File Sharing Application
+
+Maros Bednar
+FIB UPC 														22.03.2025
+
+1. Problem(s) statement / Research question(s)
+Centralized File Storage Limitations: Traditional file storage systems often rely on centralized servers, which can become bottlenecks, leading to limited scalability and potential performance degradation as the load increases. ​
+Security and Privacy Concerns: Centralized data storage can pose privacy issues, especially when handling sensitive information, as these systems may not guarantee adequate privacy measures. ​
+Speed of Data Transfer: With centralized data there is often a problem that servers may be far away from the devices.
+2
+1. Problem statement
+What is the problem that this project is going to address?
+Does it matter: why is the problem important?
+Who will benefit when the problem is solved?
+Numbered list
+1 slide max.
+
+2. Proposal
+Decentralized Storage with IPFS: I am going to implement a file-sharing application in Python utilizing IPFS's distributed network to eliminate central points of failure.​
+Content Addressing: Leverage IPFS's method of identifying files by their unique cryptographic hashes, ensuring data integrity and efficient retrieval.​
+Peer-to-Peer Network: Utilize IPFS's P2P architecture to distribute files across multiple nodes, enhancing accessibility and redundancy. Also, it will probably increase data transfer speed, since data will be routed to the closest device with this hash. 
+3
+2. Proposal
+What is the basic approach, method, idea or tool that’s being suggested to solve the problem?
+Consider referring to PS1, PS2, … 
+3 slides max.
+
+3. Hypotheses
+
+Increased Resilience: The absence of a central server makes the system more robust against censorship and single points of failure.
+Enhanced Security: By distributing files across a decentralized network using hash-codes, the system reduces the risk of data breaches and unauthorized access.​
+Improved Performance: IPFS's parallel downloading from the closest nodes can lead to faster file retrieval times compared to traditional methods.​
+Source https://filebase.com/blog/comparing-ipfs-to-traditional-file-storage-systems/
+4
+3. Hypotheses
+What exactly are the expected effects of the proposed solution? (E.g. disk I/O time will increase to 2 seconds per request.) Why is this?
+What are plausible alternatives? How likely are they?
+What’s good and bad about them by comparison with what’s proposed? What have others done already?
+What did they learn? (This is the “literature search” segment.)
+Consider referring to PS1, Pr1, … 
+2 slides max.
+
+4. Experiments / Use cases
+Development: I will create a prototype application in Python that allows users to upload and retrieve files using IPFS, ensuring a user-friendly interface.​
+Testing: Afterwards, performance evaluations to compare file retrieval times and reliability against traditional file-sharing methods will be created.​
+User Feedback: Gather insights from potential users to assess usability, identify potential issues, and compose a steps to refine the application accordingly for the future using.
+It will take me probably 60 hours to create the application and compose a deep analysis for this type of experiment.
+5
+4. Experiments
+What will be done to test out the hypotheses? (E.g. measurements, simulations, constructing code, thinking beautiful thoughts, hard vacationing).
+How will this confirm (or deny) the hypotheses?
+Why will the conclusions be believable?
+Who will work on this?
+For how long?
+What additional equipment or other resources will be needed (e.g. loan of a boa-constrictor for 2 weeks)?
+Consider referring to PS1, Pr1, H1, … 
+3 slides max.
+
+5. Results
+Functional Application: I will deliver a working file-sharing system that leverages IPFS for decentralized storage and retrieval.
+Performance Metrics: Documentation to the application will also demonstrate measurable improvements in file access speeds and system resilience compared to centralized counterparts.​
+User Satisfaction: Achieve positive feedback from users regarding the application's efficiency, security, and ease of use.​
+Project will be successful when the application will work and the experiment results will fulfil my hypothesis.
+6
+5. Results
+What will be the outcome of the work (papers, a working system, a graph of ...)?
+When?
+What are the intermediate milestones?
+How will we know when they are complete?
+What are the measures for success? (E.g. “faster”, “smaller”, “more available”.)
+How will we know to declare the project a success?
+Consider referring to PS1, Pr1, H1, E, … 
+Consider adding Annexes (as separated slides) for technical details, figures, etc. Annexes are a convenient resource for addressing audience questions.
+2 slides max.
+
+6. Conclusions (& Opened questions / Future work)
+Addressing Centralization Issues: The project showcases how IPFS can effectively mitigate the vulnerabilities inherent in centralized file-sharing systems.​
+Future Implications: This work paves the way for broader adoption of decentralized technologies, promoting a more resilient and open internet infrastructure.
+7
+6. Conclusions
+Main takeaways
+Consider referring to PS1, Pr1, H1, E, … 
+Add sections at your convenience.
+2 slides max
