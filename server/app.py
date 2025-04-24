@@ -1,6 +1,6 @@
 import os
 import mimetypes
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 import ipfshttpclient
 
@@ -15,6 +15,15 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 # Temporary dictionary to map IPFS file hashes to their original filenames
 file_hash_map = {}
+
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve_vue_app(path):
+    """Serve the Vue app's static files from the dist folder."""
+    dist_dir = os.path.join(app.root_path, 'dist')
+    if path != "" and os.path.exists(os.path.join(dist_dir, path)):
+        return send_from_directory(dist_dir, path)
+    return send_from_directory(dist_dir, 'index.html')
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -69,4 +78,4 @@ def retrieve_file(file_hash):
     return send_file(file_path, as_attachment=True, download_name=file_name, mimetype=mime_type)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0', debug=True, port=5001)

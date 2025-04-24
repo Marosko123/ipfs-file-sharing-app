@@ -73,18 +73,26 @@ Open new terminal window and run the following commands:
 
 ```bash
 cd server
+source venv/bin/activate
 python3 app.py
 ```
 
-3. **Launch GUI:**
-Open new terminal window and run the following commands:
+3. **UPDATE GUI URL:**
+Open .env.production file and update the VITE_API_BASE_URL variable to point to your server's IP address and port.
+Server IP was generated using command above. (example: http://168.1.1:5001)
+
+4. **Run GUI:**
 
 ```bash
 cd gui
 npm install
-npm run dev
+npm run build
 ```
 
+Then, copy generated dist folder to the server directory next to app.py.
+
+5. **Access the GUI:**
+Open your web browser and navigate server url (example `http://168.1.1:5001` or the port you specified in the GUI configuration).
 
 ## Contributing
 

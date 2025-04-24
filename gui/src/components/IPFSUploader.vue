@@ -158,7 +158,7 @@ async function retrieveFile() {
 }
 
 function copyToClipboard() {
-  if (fileHash.value) navigator.clipboard.writeText(fileHash.value);
+  if (fileHash.value) navigator.clipboard?.writeText(fileHash.value);
 }
 
 const historyComponent = ref(null);

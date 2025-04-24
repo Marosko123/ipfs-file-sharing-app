@@ -43,7 +43,7 @@ export default {
       }
     },
     copyHash(hash) {
-      navigator.clipboard.writeText(hash);
+      navigator.clipboard?.writeText(hash);
     },
     deleteHash(index) {
       this.hashes.splice(index, 1);

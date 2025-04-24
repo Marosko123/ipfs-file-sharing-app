@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite --mode development",
     "dev:all": "concurrently \"cd ../server && python app.py\" \"npm run dev\"",
-    "build": "run-p type-check \"build-only {@}\" --mode production",
     "preview": "vite preview",
+    "build": "vite build",
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
