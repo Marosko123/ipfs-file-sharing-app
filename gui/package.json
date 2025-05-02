@@ -15,10 +15,18 @@
     "serve": "vite preview"
   },
   "dependencies": {
+    "@helia/unixfs": "^5.0.0",
+    "@helia/verified-fetch": "^2.6.13",
+    "@libp2p/webrtc-star": "^7.0.0",
+    "@libp2p/webtransport": "^5.0.40",
     "axios": "^1.8.2",
+    "chart.js": "^4.4.9",
+    "helia": "^5.3.0",
     "pinia": "^3.0.1",
     "vue": "^3.5.13",
-    "vue-router": "^4.5.0"
+    "vue-chartjs": "^5.3.2",
+    "vue-router": "^4.5.0",
+    "web3.storage": "^4.5.5"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.0",

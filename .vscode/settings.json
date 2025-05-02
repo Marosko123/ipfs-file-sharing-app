@@ -1,0 +1,32 @@
+{
+  // Ensure line endings are consistent
+  "files.eol": "\n",
+  // 1) Use Prettier as the default formatter globally
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  // 2) Format on Save (runs Prettier)
+  "editor.formatOnSave": true,
+  // Fix any typo here: "[javacript]" => "[javascript]"
+  "[javascript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  // Add "[vue]" to ensure Vue files also get formatted by Prettier
+  "[vue]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
+  },
+  // 3) ESLint Auto-Fix on Save
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  }
+}
