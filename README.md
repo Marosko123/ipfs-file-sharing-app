@@ -1,51 +1,69 @@
-# IPFS File Sharing App
+# ipfs-web-interface
 
-This repository provides a simple, practical introduction to decentralized file storage using IPFS (InterPlanetary File System). The project bridges theoretical understanding and practical implementation by demonstrating core IPFS operations in Python, complemented by an optional interactive GUI built with JavaScript.
+A full-stack Vue 3 + Vite application with an accompanying Node.js/Express server, enabling in-browser IPFS uploads, downloads, peer management, performance monitoring, and optional pinning via Web3.Storage.
 
+Author: Maros Bednar
+Date: 2025-05-05
 
-## Features
+---
 
-**Command-Line Interface:** Basic file operations including uploading, retrieving, and listing files using IPFS.
+## 🎯 Features
 
-**Interactive GUI:** Optional graphical interface enhancing user experience and interaction with IPFS.
+- **In-Browser IPFS Node**  
+  Spin up a Helia (libp2p) node in your browser—no external daemon required.  
+- **Upload & Download**  
+  Add arbitrary files to IPFS and fetch them by CID, with automatic timing and clipboard integration.  
+- **Peer Management**  
+  View your peer ID and a live list of connected peers.  
+- **Performance Monitoring**  
+  Track upload/download durations and file sizes, persist them in `localStorage`, export CSV.  
+- **History**  
+  Browse past operations (uploads/downloads) with timestamps.  
+- **Optional Pinning**  
+  Pin CIDs to Web3.Storage via a simple Node.js/Express backend.  
+- **Responsive UI**  
+  Built with Vue 3, Vite, TypeScript, and Pinia.  
 
-**Educational Content:** Clearly documented Jupyter notebooks explaining theoretical concepts and implementation details.
+---
 
-**Modular and Tested:** Structured codebase with unit and integration tests ensuring reliability and ease of use.
+## 🛠 Tech Stack
 
+- **Frontend:** Vue 3, Vite, TypeScript, Pinia, Vue Router  
+- **IPFS:** Helia (libp2p + UnixFS)  
+- **Backend:** Node.js, Express, Web3.Storage client  
+- **Tooling:** ESLint, Prettier, vue-tsc  
 
+---
 
-## Technologies Used
+## 🔧 Prerequisites
 
-- **IPFS:** Decentralized file storage protocol.
-- **Python:** Backend implementation.
-- **JavaScript:** Optional GUI frontend.
-- **Jupyter Notebook:** Interactive documentation.
+- **Node.js** 16+ & npm  
+- **Modern Browser** (with Web Crypto API support)  
 
+---
 
 ## Installation
 
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/Marosko123/ipfs-file-sharing-app.git
+# Clone repo
+git clone https://github.com/yourusername/ipfs-web-interface.git
+cd ipfs-web-interface
+
+# Install both frontend
+npm install
 ```
 
-
-2. **Navigate to the server directory:**
+2. **Install server dependencies:**
 
 ```bash
 cd ipfs-file-sharing-app/server
-```
-
-
-3. **Install server dependencies:**
-
-```bash
 pip install -r requirements.txt
+
 ```
 
-4. **Install Correct version of IPFS daemon**
+3. **Install Correct version of IPFS daemon**
 
 ```bash
 curl -O https://dist.ipfs.tech/go-ipfs/v0.7.0/go-ipfs_v0.7.0_darwin-amd64.tar.gz
